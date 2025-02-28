@@ -131,6 +131,8 @@ void send_next_post_command(void)
     // static int post_step = CMD_HTTP_URL_IDX;
     printk("post_step: %d\n", post_step);
 
+    char send_buf[MSG_SIZE];
+
     switch (post_step) {
         case CMD_HTTP_URL_IDX:
             send_uart(AT_HTTP_CFG "=\"" SUB_URL "\",\"" DEFAULT_URL ROUTE_EXAMPLE ROUTE_TEST "\"\r\n");
