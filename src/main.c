@@ -28,6 +28,18 @@ static int post_step = CMD_HTTP_URL_IDX;
 // static method
 static void send_uart(char *buf);
 
+void wifi_value_init(void)
+{
+    network_count = 0;
+    rx_buf_pos = 0;
+    send_cmd = CMD_NULL;
+    init_step = CMD_HTTP_OUT_IDX;
+    post_step = CMD_HTTP_URL_IDX;
+
+    memset(rx_buf, 0, sizeof(rx_buf));
+    memset(networks, 0, sizeof(networks));
+}
+
 void set_send_cmd(int cmd)
 {
     send_cmd = cmd;
@@ -152,8 +164,7 @@ void parse_msg(char *msg)
 
     if(strcmp(msg, AT_READY) == 0){
         printk("WiFi modem ready\n");
-        init_step = CMD_HTTP_OUT_IDX;
-        post_step = CMD_HTTP_URL_IDX;
+        wifi_value_init();
         send_uart("AT\r\n");
         set_send_cmd(CMD_AT_IDX);
         return;
@@ -375,6 +386,8 @@ static void send_uart(char *buf)
 int main(void)
 {
     char recv_buf[MSG_SIZE];
+
+    wifi_value_init();
 
     if (!device_is_ready(uart_dev)) {
         printk("UART device not found!");
