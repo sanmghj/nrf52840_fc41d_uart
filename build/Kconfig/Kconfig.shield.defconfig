@@ -1,0 +1,2 @@
+osource "d:/devlop/zephyerproject/zephyr_2.4.1/nrf52840dk_fc41d_uart/boards/shields/*/Kconfig.defconfig"
+osource "C:/ncs/v2.4.1/nrf/boards/shields/*/Kconfig.defconfig"
