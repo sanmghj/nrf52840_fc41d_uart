@@ -125,7 +125,10 @@ void send_next_post_command(void)
             break;
 
         case CMD_HTTP_POST_IDX:
-            send_uart(AT_HTTP_POST "=31,60,60\r\n");
+            snprintf(send_buf, sizeof(send_buf), "%s=%d,%d,%d\r\n",
+            AT_HTTP_POST, strlen(TEST_STRING), BODY_WAIT_INTERVAL, WAIT_RESPONSE_TIME);
+            send_uart(send_buf);
+            set_send_cmd(CMD_HTTP_POST_IDX);
             break;
 
         default:
@@ -232,21 +235,22 @@ void parse_msg(char *msg)
             return;
 
         case CMD_HTTP_AGENT_IDX:
+        case CMD_HTTP_URL_IDX:
             if(strcmp(msg, AT_OK) == 0) {
                 printk("HTTP configuration complete\n");
                 send_next_post_command();  // POST 명령어 시작
             }
             return;
 
-        case CMD_HTTP_URL_IDX:
-            if(strcmp(msg, AT_OK) == 0) {
-                memset(send_buf, 0, sizeof(send_buf));
-                snprintf(send_buf, sizeof(send_buf), "%s=%d,%d,%d\r\n",
-                        AT_HTTP_POST, strlen(TEST_STRING), BODY_WAIT_INTERVAL, WAIT_RESPONSE_TIME);
-                send_uart(send_buf);
-                set_send_cmd(CMD_HTTP_POST_IDX);
-            }
-            return;
+        // case CMD_HTTP_URL_IDX:
+        //     if(strcmp(msg, AT_OK) == 0) {
+        //         memset(send_buf, 0, sizeof(send_buf));
+        //         snprintf(send_buf, sizeof(send_buf), "%s=%d,%d,%d\r\n",
+        //                 AT_HTTP_POST, strlen(TEST_STRING), BODY_WAIT_INTERVAL, WAIT_RESPONSE_TIME);
+        //         send_uart(send_buf);
+        //         set_send_cmd(CMD_HTTP_POST_IDX);
+        //     }
+        //     return;
 
         case CMD_HTTP_POST_IDX:
             if(strcmp(msg, "CONNECT") == 0){
